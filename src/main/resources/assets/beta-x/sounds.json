@@ -1,0 +1,14 @@
+{
+  "enable": {
+    "sounds": [
+      {
+        "name": "beta-x:enable",
+        "stream": false
+      },
+      {
+        "name": "beta-x:disable",
+        "stream": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "beta-x",
+  "version": "${version}",
+  "name": "BetaX-Hack",
+  "description": "Based utility mod.",
+  "authors": [
+    "Fin_LemonKee",
+    "Niuren",
+    "tRollaURa_"
+  ],
+  "contact": {
+    "homepage": "http://lemonclient.cn"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/beta-x/textures/icons/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.niuren.BetaX"
+    ]
+  },
+  "mixins": [
+    "betax-hack.mixins.json"
+  ],
+  "accessWidener": "betax-hack.accesswidener",
+  "depends": {
+    "java": ">=17",
+    "minecraft": "${minecraft_version}",
+    "fabricloader": ">=${loader_version}"
+  }
+}

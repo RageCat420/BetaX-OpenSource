@@ -1,0 +1,172 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id "fabric-loom" version "1.7-SNAPSHOT"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id "org.jetbrains.kotlin.jvm" version "2.0.0"
+}
+
+version = project.mod_version + (project.hasProperty("devbuild") ? ("-" + project.findProperty("devbuild")) : "")
+group = project.maven_group
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = 17
+        freeCompilerArgs = [
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-Xjvm-default=all-compatibility",
+            "-Xlambdas=indy",
+            "-Xcontext-receivers"
+        ]
+    }
+}
+
+repositories {
+    maven {
+        name = "Meteor Maven"
+        url = "https://maven.meteordev.org/releases"
+    }
+    maven {
+        name = "Meteor Maven Snapshots"
+        url = "https://maven.meteordev.org/snapshots"
+    }
+    maven {
+        name = 'Ladysnake Mods'
+        url = 'https://maven.ladysnake.org/releases'
+        content {
+            includeGroup 'io.github.ladysnake'
+            includeGroup 'org.ladysnake'
+            includeGroupByRegex 'dev\\.onyxstudios.*'
+        }
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        name = "Vram"
+        url = "https://maven.vram.io//"
+    }
+    maven {
+        name = "Chinese Repo"
+        url = "https://repository.hanbings.io/proxy"
+    }
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/'
+    }
+    maven {
+        name = "Seedfinding Maven"
+        url = "https://maven.seedfinding.com/"
+    }
+    maven {
+        name = "Seedfinding Maven Snapshots"
+        url = "https://maven-snapshots.seedfinding.com/"
+    }
+    maven {
+        name = "Curse Maven"
+        url = "https://www.cursemaven.com"
+    }
+    maven {
+        name = "Masa"
+        url = "https://masa.dy.fi/maven"
+    }
+    mavenCentral()
+}
+
+configurations {
+    libImpl
+    extraLibs
+
+    // include mods
+    modImplementation.extendsFrom(modInclude)
+    include.extendsFrom(modInclude)
+
+    // include libraries
+    implementation.extendsFrom(library)
+    shadow.extendsFrom(library)
+}
+
+dependencies {
+
+    // Fabric
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modInclude fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
+
+    // Compat fixes
+    modCompileOnly fabricApi.module("fabric-renderer-indigo", project.fabric_version)
+
+    // Baritone (https://github.com/MeteorDevelopment/baritone)
+    modCompileOnly "meteordevelopment:baritone:${project.baritone_version}-SNAPSHOT"
+
+    // Fabric Language Kotlin
+    modInclude "net.fabricmc:fabric-language-kotlin:${project.fabric_kotlin_version}"
+
+    // Libraries
+    library "meteordevelopment:orbit:${project.orbit_version}"
+
+    library files("libs/luaj-jse-3.0.2.jar")
+
+    // JSON
+    implementation "org.json:json:${project.json_version}"
+
+    configurations.libImpl.dependencies.each {
+        implementation(it)
+    }
+    configurations.implementation.extendsFrom(
+            configurations.extraLibs
+    )
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/betax-hack.accesswidener")
+}
+
+
+afterEvaluate {
+    migrateMappings.configure {
+        outputDir = project.file("src/main/java")
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+
+    dependencies {
+        exclude {
+            it.moduleGroup == "org.slf4j"
+        }
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
+    withSourcesJar()
+}
+
+remapJar {
+    dependsOn shadowJar
+    inputFile.set(shadowJar.archiveFile)
+}

@@ -1,0 +1,48 @@
+{
+  "required": true,
+  "package": "dev.niuren.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+    "IClientWorld",
+    "IMinecraftClient",
+    "MixinChatHud",
+    "MixinChatHudLine",
+    "MixinClientConnection",
+    "MixinClientPlayerEntity",
+    "MixinClientPlayerInteractionManager",
+    "MixinClientPlayNetworkHandler",
+    "MixinEntityRenderer",
+    "MixinGameRenderer",
+    "MixinInGameHud",
+    "MixinKeyboard",
+    "MixinMinecraftClient",
+    "MixinParticleManager",
+    "MixinPlayerEntityRenderer",
+    "MixinTitleScreen",
+    "MixinVec3d",
+    "MixinWindows",
+    "block.MixinBipedEntityModel",
+    "block.MixinHeldItemRenderer",
+    "block.MixinPlayerEntityRenderer",
+    "MixinInGameOverlayRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "IEntityTrackingSection",
+    "IEntityVelocityUpdateS2CPacket",
+    "IExplosion",
+    "IExplosionS2CPacket",
+    "IPlayerMoveC2SPacket",
+    "IPlayerPositionLookS2CPacket",
+    "ISectionedEntityCache",
+    "ISimpleEntityLookup",
+    "IWorld",
+    "MixinEntity",
+    "MixinExplosion",
+    "MixinKeyBoardInput",
+    "MixinPlayerEntity",
+    "MixinRaycastContext"
+  ]
+}
